@@ -9,8 +9,13 @@ workflows:
             branches:
               only:
                 - main
-
-
+      - deploy:
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - build
 
 # Define the jobs we want to run for this project
 jobs:
@@ -20,14 +25,14 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
-      - run: 
+      - run:
           name: update-npm
-          command: 'sudo npm install -g npm@8.1.4'
+          command: "sudo npm install -g npm@8.1.4"
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
           name: install-npm
-          command: npm install       
+          command: npm install
       - run:
           name: test-run
           command: npm run test
@@ -35,3 +40,10 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
+  deploy:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - run:
+          name: deploy-ExampleApplication1
+          command: ssh -0 StrictHostKeyChecking=no $EC2_VITALIE_TEST@EC2_PUBLIC_DNS "rm -rf ExampleApplication1/; git clone https://github.com/Dev-ops-sec-test/ExampleApplication1.git; source ExampleApplication1/deploy.sh"
