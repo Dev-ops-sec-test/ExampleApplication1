@@ -45,5 +45,5 @@ jobs:
       - image: circleci/node:latest
     steps:
       - run:
-          name: deploy-ExampleApplication1
+          name: deploy-application
           command: ssh -0 StrictHostKeyChecking=no $EC2_VITALIE_TEST@EC2_PUBLIC_DNS "rm -rf ExampleApplication1/; git clone https://github.com/Dev-ops-sec-test/ExampleApplication1.git; source ExampleApplication1/deploy.sh"
